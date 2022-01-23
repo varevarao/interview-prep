@@ -1,0 +1,3 @@
+type LP = {
+  title: string;
+};
