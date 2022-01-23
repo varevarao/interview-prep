@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { LS_KEY_EXAMPLES, LS_KEY_LPS } from '../../utils/constants';
-import { storeKey } from '../../utils/storage';
+import { fetchStoredKey } from '../../utils/storage';
 
-export type ImportDataProps = {
+export type ExportDataProps = {
   isOpen: boolean;
   onClose: () => void;
 };
-function ImportData({ isOpen, onClose }: ImportDataProps) {
-  const [lpData, setLPData] = useState<string>('');
-  const [exampleData, setExampleData] = useState<string>('');
+export function ExportData({ isOpen, onClose }: ExportDataProps) {
+  const [lpData] = useState<LP[]>(fetchStoredKey<LP[]>(LS_KEY_LPS));
+  const [exampleData] = useState<Example[]>(
+    fetchStoredKey<Example[]>(LS_KEY_EXAMPLES),
+  );
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} contentLabel="New Example">
       <div className="w-full h-full flex flex-col">
@@ -22,8 +24,7 @@ function ImportData({ isOpen, onClose }: ImportDataProps) {
                 autoFocus
                 className="border-2 w-full"
                 rows={10}
-                value={lpData}
-                onChange={(e) => setLPData(e.target.value)}
+                value={JSON.stringify(lpData)}
               />
             </div>
           </div>
@@ -34,33 +35,16 @@ function ImportData({ isOpen, onClose }: ImportDataProps) {
                 autoFocus
                 className="border-2 w-full"
                 rows={10}
-                value={exampleData}
-                onChange={(e) => setExampleData(e.target.value)}
+                value={JSON.stringify(exampleData)}
               />
             </div>
           </div>
         </div>
 
         <div className="flex gap-10 mt-5 justify-center mb-5">
-          <button
-            className="bg-green-300 p-2"
-            onClick={() => {
-              if (lpData) {
-                storeKey<LP[]>(LS_KEY_LPS, JSON.parse(lpData));
-              }
-              if (exampleData) {
-                storeKey<Example[]>(LS_KEY_EXAMPLES, JSON.parse(exampleData));
-              }
-              window.location.reload();
-            }}
-          >
-            Save
-          </button>
           <button onClick={() => onClose()}>Close</button>
         </div>
       </div>
     </Modal>
   );
 }
-
-export default ImportData;

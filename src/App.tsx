@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ExampleList } from './components/ExampleList';
 import { LPList } from './components/LPList';
+import { ExportData } from './components/modals/ExportData';
 import ImportData from './components/modals/ImportData';
 import { NewExample } from './components/modals/NewExample';
 import { NewLP } from './components/modals/NewLP';
@@ -16,6 +17,8 @@ function App() {
   const [selectedLP, setSelectedLP] = useState<LP[]>([]);
 
   const [showImport, setShowImport] = useState<boolean>(false);
+  const [showExport, setShowExport] = useState<boolean>(false);
+
   const [showAddLP, setShowAddLP] = useState<boolean>(false);
   const [editingLP, setEditingLP] = useState<LP | undefined>();
 
@@ -34,6 +37,9 @@ function App() {
     <div className="h-full w-full grid grid-cols-2 gap-4 p-5">
       {Boolean(showImport) ? (
         <ImportData isOpen={showImport} onClose={() => setShowImport(false)} />
+      ) : null}
+      {Boolean(showExport) ? (
+        <ExportData isOpen={showExport} onClose={() => setShowExport(false)} />
       ) : null}
       {Boolean(showAddLP || editingLP) ? (
         <NewLP
@@ -86,12 +92,20 @@ function App() {
         />
       ) : null}
 
-      <button
-        className="absolute top-1 right-1 text-xs bg-indigo-200 p-1"
-        onClick={() => setShowImport(true)}
-      >
-        Import
-      </button>
+      <div className="absolute top-1 right-1 flex gap-4">
+        <button
+          className="text-xs bg-indigo-200 p-1"
+          onClick={() => setShowExport(true)}
+        >
+          Export
+        </button>
+        <button
+          className="text-xs bg-indigo-200 p-1"
+          onClick={() => setShowImport(true)}
+        >
+          Import
+        </button>
+      </div>
       <div className="border-r-2 border-gray-500">
         <div className="mb-5 flex items-center justify-between p-5">
           <h2 className="text-lg font-bold">LP's</h2>
