@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export type ExampleListProps = {
   onClickEdit?: (example: Example) => void;
@@ -14,10 +14,20 @@ export function ExampleList({
   examples,
   activeLP,
 }: ExampleListProps) {
+  const mappedExamples = useMemo<(Example & { active: boolean })[]>(() => {
+    const lpTitles = activeLP.map((lp) => lp.title);
+    const mapped = examples.map<Example & { active: boolean }>((e) => ({
+      ...e,
+      active: e.lps.some((lp) => lpTitles.indexOf(lp.title) >= 0),
+    }));
+    return mapped.sort((a, b) =>
+      a.active !== b.active ? (a.active ? -1 : 1) : 0,
+    );
+  }, [examples, activeLP]);
   return (
     <div className="flex flex-col gap-5">
       {/* <div className="flex flex-col gap-5"> */}
-      {examples.map((ex, idx) => {
+      {mappedExamples.map((ex, idx) => {
         const isActive = ex.lps.some(
           (lp) => activeLP.map((lp) => lp.title).indexOf(lp.title) >= 0,
         );
